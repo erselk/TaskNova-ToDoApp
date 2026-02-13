@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:task_nova/providers/user_provider.dart';
 import 'package:task_nova/screens/home_screen.dart';
 import 'package:task_nova/theme/app_theme.dart';
+import 'package:task_nova/widgets/animated_background.dart';
 import 'package:task_nova/widgets/custom_text_field.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,6 +20,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _nameController;
   int _selectedColorIndex = 0;
+  String? _selectedImagePath;
+  final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -25,12 +30,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     _nameController = TextEditingController(text: widget.isSetupMode ? "" : userProvider.userName);
     _selectedColorIndex = userProvider.avatarColorIndex;
+    _selectedImagePath = userProvider.profileImagePath;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImagePath = image.path;
+      });
+    }
   }
 
   void _saveProfile() {
@@ -42,6 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Provider.of<UserProvider>(context, listen: false).updateUserData(
         name: _nameController.text.trim(),
         colorIndex: _selectedColorIndex,
+        imagePath: _selectedImagePath,
       );
 
       if (widget.isSetupMode) {
@@ -77,10 +95,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: Text("Edit Profile", style: Theme.of(context).textTheme.headlineSmall),
               centerTitle: true,
             ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
+      body: AnimatedBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+            child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,23 +124,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 
                 // Avatar Preview
                 Center(
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: colors[_selectedColorIndex],
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colors[_selectedColorIndex].withOpacity(0.4),
-                          blurRadius: 16,
-                          offset: const Offset(0, 8),
-                        )
-                      ]
-                    ),
-                    child: Center(
-                      child: Icon(Icons.person, size: 50, color: Colors.white),
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 120, // Slightly larger
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: colors[_selectedColorIndex],
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colors[_selectedColorIndex].withOpacity(0.4),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ],
+                            image: _selectedImagePath != null
+                                ? DecorationImage(
+                                    image: FileImage(File(_selectedImagePath!)),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                          ),
+                          child: _selectedImagePath == null
+                              ? const Center(
+                                  child: Icon(Icons.person, size: 60, color: Colors.white),
+                                )
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -209,6 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

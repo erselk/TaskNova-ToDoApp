@@ -7,7 +7,9 @@ import 'package:task_nova/screens/add_task_screen.dart';
 import 'package:task_nova/screens/profile_screen.dart';
 import 'package:task_nova/theme/app_theme.dart';
 import 'package:task_nova/widgets/task_tile.dart';
+import 'package:task_nova/widgets/animated_background.dart';
 import 'package:animate_do/animate_do.dart';
+import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,8 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: const Icon(Icons.add, size: 32),
       ),
-      body: SafeArea(
-        child: Column(
+      body: AnimatedBackground(
+        child: SafeArea(
+          child: Column(
           children: [
             // Custom App Bar Area
             Padding(
@@ -73,11 +76,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(builder: (context) => const ProfileScreen()),
                         );
                       },
-                      child: CircleAvatar(
-                        radius: 24,
-                        backgroundColor: user.currentAvatarColor.withOpacity(0.1),
-                        child: Icon(Icons.person, color: user.currentAvatarColor),
-                      ),
+                        child: CircleAvatar(
+                          radius: 28, // Slightly larger
+                          backgroundColor: user.currentAvatarColor.withOpacity(0.1),
+                          backgroundImage: user.profileImagePath != null
+                              ? FileImage(File(user.profileImagePath!))
+                              : null,
+                          child: user.profileImagePath == null
+                              ? Icon(Icons.person, color: user.currentAvatarColor)
+                              : null,
+                        ),
                     ),
                   ),
                 ],
@@ -177,6 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

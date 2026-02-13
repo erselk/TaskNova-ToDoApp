@@ -5,10 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserProvider extends ChangeNotifier {
   String _userName = "User";
   int _avatarColorIndex = 0; // 0-based index for predefined colors
+  String? _profileImagePath;
   bool _isLoading = true;
 
   String get userName => _userName;
   int get avatarColorIndex => _avatarColorIndex;
+  String? get profileImagePath => _profileImagePath;
   bool get isLoading => _isLoading;
 
   // Predefined avatar colors
@@ -40,6 +42,7 @@ class UserProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _userName = prefs.getString('userName') ?? "User";
       _avatarColorIndex = prefs.getInt('avatarColorIndex') ?? 0;
+      _profileImagePath = prefs.getString('profileImagePath');
     } catch (e) {
       if (kDebugMode) {
         print("Error loading user data: $e");
@@ -50,15 +53,21 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateUserData({required String name, required int colorIndex}) async {
+  Future<void> updateUserData({required String name, required int colorIndex, String? imagePath}) async {
     _userName = name;
     _avatarColorIndex = colorIndex;
+    if (imagePath != null) {
+      _profileImagePath = imagePath;
+    }
     notifyListeners();
 
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('userName', name);
       await prefs.setInt('avatarColorIndex', colorIndex);
+      if (imagePath != null) {
+        await prefs.setString('profileImagePath', imagePath);
+      }
     } catch (e) {
       if (kDebugMode) {
         print("Error saving user data: $e");
@@ -69,10 +78,12 @@ class UserProvider extends ChangeNotifier {
   Future<void> clearUserData() async {
     _userName = "User";
     _avatarColorIndex = 0;
+    _profileImagePath = null;
     notifyListeners();
     
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userName');
     await prefs.remove('avatarColorIndex');
+    await prefs.remove('profileImagePath');
   }
 }

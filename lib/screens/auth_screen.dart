@@ -6,6 +6,7 @@ import 'package:task_nova/screens/home_screen.dart';
 import 'package:task_nova/screens/profile_screen.dart';
 import 'package:task_nova/theme/app_theme.dart';
 import 'package:task_nova/widgets/custom_text_field.dart';
+import 'package:task_nova/widgets/animated_background.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -59,9 +60,10 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: SizedBox(
+      body: AnimatedBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
@@ -152,6 +154,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 const Spacer(),
               ],
             ),
+          ),
           ),
         ),
       ),

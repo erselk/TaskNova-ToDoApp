@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_nova/screens/auth_screen.dart';
 import 'package:task_nova/theme/app_theme.dart';
+import 'package:task_nova/widgets/animated_background.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -8,10 +9,10 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
+      body: AnimatedBackground(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Spacer(),
@@ -74,6 +75,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
             const SizedBox(height: 50),
           ],
+        ),
         ),
       ),
     );
