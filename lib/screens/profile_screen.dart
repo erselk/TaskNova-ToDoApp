@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -132,19 +134,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: 120, // Slightly larger
                           height: 120,
                           decoration: BoxDecoration(
-                            color: colors[_selectedColorIndex],
+                            color: _selectedImagePath != null ? Colors.grey[200] : colors[_selectedColorIndex],
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 4),
                             boxShadow: [
                               BoxShadow(
-                                color: colors[_selectedColorIndex].withOpacity(0.4),
+                                color: _selectedImagePath != null 
+                                    ? Colors.black.withOpacity(0.1) 
+                                    : colors[_selectedColorIndex].withOpacity(0.4),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               )
                             ],
                             image: _selectedImagePath != null
                                 ? DecorationImage(
-                                    image: FileImage(File(_selectedImagePath!)),
+                                    image: kIsWeb 
+                                      ? NetworkImage(_selectedImagePath!) 
+                                      : FileImage(File(_selectedImagePath!)) as ImageProvider,
                                     fit: BoxFit.cover,
                                   )
                                 : null,
@@ -168,6 +174,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
                           ),
                         ),
+
+                        if (_selectedImagePath != null)
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedImagePath = null;
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: const Icon(Icons.close, size: 18, color: Colors.white),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),

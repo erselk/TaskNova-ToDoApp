@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -80,7 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           radius: 28, // Slightly larger
                           backgroundColor: user.currentAvatarColor.withOpacity(0.1),
                           backgroundImage: user.profileImagePath != null
-                              ? FileImage(File(user.profileImagePath!))
+                              ? (kIsWeb 
+                                  ? NetworkImage(user.profileImagePath!) 
+                                  : FileImage(File(user.profileImagePath!))) as ImageProvider
                               : null,
                           child: user.profileImagePath == null
                               ? Icon(Icons.person, color: user.currentAvatarColor)
