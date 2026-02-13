@@ -12,7 +12,7 @@ class UserProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Predefined avatar colors
-  staticList<Color> get avatarColors => [
+  static List<Color> get avatarColors => [
     const Color(0xFF4F46E5), // Indigo (Default)
     const Color(0xFFEF4444), // Red
     const Color(0xFFF59E0B), // Amber
@@ -23,7 +23,10 @@ class UserProvider extends ChangeNotifier {
     const Color(0xFF14B8A6), // Teal
   ];
 
-  Color get currentAvatarColor => avatarColors[_avatarColorIndex % avatarColors.length];
+  Color get currentAvatarColor {
+    if (UserProvider.avatarColors.isEmpty) return Colors.blue;
+    return UserProvider.avatarColors[_avatarColorIndex % UserProvider.avatarColors.length];
+  }
 
   UserProvider() {
     loadUserData();

@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const colors = UserProvider.avatarColors;
+    final colors = UserProvider.avatarColors;
     
     return Scaffold(
       appBar: widget.isSetupMode
