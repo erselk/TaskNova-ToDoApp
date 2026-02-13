@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_nova/screens/auth_screen.dart';
 import 'package:task_nova/theme/app_theme.dart';
 import 'package:task_nova/widgets/animated_background.dart';
+import 'package:task_nova/widgets/logo_widget.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -17,19 +18,7 @@ class OnboardingScreen extends StatelessWidget {
           children: [
             Spacer(),
             // Logo Area
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.task_alt_rounded,
-                size: 64,
-                color: AppTheme.primaryColor,
-              ),
-            ),
+            const LogoWidget(size: 150),
             const SizedBox(height: 40),
             Text(
               "TaskNova",

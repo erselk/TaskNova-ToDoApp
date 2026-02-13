@@ -26,15 +26,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddTaskScreen()),
-          );
-        },
-        child: const Icon(Icons.add, size: 32),
-      ),
+
+      floatingActionButton: Consumer<UserProvider>(
+          builder: (context, user, _) => FloatingActionButton(
+            backgroundColor: user.currentAvatarColor,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddTaskScreen()),
+              );
+            },
+            child: const Icon(Icons.add, size: 32),
+          ),
+        ),
       body: AnimatedBackground(
         child: SafeArea(
           child: Column(
@@ -100,16 +104,20 @@ class _HomeScreenState extends State<HomeScreen> {
             // Filter Chips
             SizedBox(
               height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                children: [
-                  _buildFilterChip("All Tasks", 0),
-                  const SizedBox(width: 12),
-                  _buildFilterChip("Pending", 1),
-                  const SizedBox(width: 12),
-                  _buildFilterChip("Completed", 2),
-                ],
+              child: Consumer<UserProvider>(
+                builder: (context, user, _) {
+                  return ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    children: [
+                      _buildFilterChip("All Tasks", 0, user.currentAvatarColor),
+                      const SizedBox(width: 12),
+                      _buildFilterChip("Pending", 1, user.currentAvatarColor),
+                      const SizedBox(width: 12),
+                      _buildFilterChip("Completed", 2, user.currentAvatarColor),
+                    ],
+                  );
+                },
               ),
             ),
             
@@ -193,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, int index) {
+  Widget _buildFilterChip(String label, int index, Color color) {
     final isSelected = _selectedFilterIndex == index;
     return GestureDetector(
       onTap: () {
@@ -205,15 +213,15 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor : Colors.white,
+          color: isSelected ? color : Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : Colors.grey.shade200,
+            color: isSelected ? color : Colors.grey.shade200,
           ),
           boxShadow: isSelected 
             ? [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  color: color.withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 )
